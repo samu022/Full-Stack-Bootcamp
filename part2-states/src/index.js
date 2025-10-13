@@ -4,6 +4,9 @@ import { useState } from 'react';
 
 const rootElement = document.getElementById("root");
 const root = createRoot(rootElement);
+const Counter = ({number}) =>{
+  return <h1>{number}</h1>
+}
 
 const App = () => {
   const [contador, setContador] = useState(0);
@@ -23,7 +26,7 @@ const App = () => {
   const isEven = contador % 2 === 0
   return (
     <div>
-      <h1>{contador}</h1>
+      <Counter number={contador} />
       <p>{isEven ? 'Es par':'Es impar'}</p>
       <button onClick={() => handleClickIncrementarDescrementar(true)}>
         Incrementar
