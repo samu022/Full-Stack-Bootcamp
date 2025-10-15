@@ -1,10 +1,20 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {Note} from "./Note.js";
 
-export default function App(props) {
-  const [notes, setNotes] = useState(props.notes);
+export default function App() {
+  const [notes, setNotes] = useState([]);
   const [newNote, setNewNote] = useState("");
 
+  //fetch recupera datos de una api
+  useEffect(() =>{
+    setTimeout(() => {
+      fetch('https://jsonplaceholder.typicode.com/posts')
+      .then(response => response.json())
+      .then(json => {
+        setNotes(json);
+      });
+    }, 2000);
+  }, []);
   const handleChange = (event) => {
     setNewNote(event.target.value);
   };
@@ -26,9 +36,9 @@ export default function App(props) {
       <h1>Notes</h1>
       <ol>
       {notes
-        .map((note)=>{
-         <Note /> 
-        })
+        .map((note) => (
+         <Note key={note.id} {...note}/> 
+        ))
       } 
       </ol>
       <form onSubmit={handleSubmit}>
