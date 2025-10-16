@@ -24,12 +24,18 @@ export default function App() {
   const handleSubmit = (event) =>{
     event.preventDefault();
     const noteToAddToState ={
-      id: notes.length + 1,
+      //id: notes.length + 1,
       title: newNote,
-      body: newNote
+      body: newNote,
+      userId: 1
     };
+    axios.post("https://jsonplaceholder.typicode.com/posts", noteToAddToState)
+    .then(response => {
+      const {data} = response;
+      setNotes(prevNotes => prevNotes.concat(data));
+    })
 
-    setNotes((prevNotes) => prevNotes.concat(noteToAddToState));
+    //setNotes((prevNotes) => prevNotes.concat(noteToAddToState));
     setNewNote("");
   };
 
@@ -49,7 +55,7 @@ export default function App() {
       } 
       </ol>
       <form onSubmit={handleSubmit}>
-        <input type="text" onChange={handleChange}></input>
+        <input type="text" onChange={handleChange} value={newNote}></input>
         <button>Crear nota</button>
       </form>
     </div>
