@@ -1,19 +1,21 @@
 import { useEffect, useState } from "react";
 import {Note} from "./Note.js";
+import axios from 'axios';
 
 export default function App() {
   const [notes, setNotes] = useState([]);
   const [newNote, setNewNote] = useState("");
-
+  const [loading, setLoading] = useState(false);
   //fetch recupera datos de una api
   useEffect(() =>{
-    setTimeout(() => {
-      fetch('https://jsonplaceholder.typicode.com/posts')
-      .then(response => response.json())
-      .then(json => {
-        setNotes(json);
+    setLoading(true); 
+      axios
+      .get('https://jsonplaceholder.typicode.com/posts')
+      .then(response => {
+        const {data} = response;
+        setNotes(data);
+        setLoading(false); 
       });
-    }, 2000);
   }, []);
   const handleChange = (event) => {
     setNewNote(event.target.value);
@@ -31,9 +33,14 @@ export default function App() {
     setNewNote("");
   };
 
+  //if(notes.length === 0) return "Hola como estas!";
   return (
     <div>
       <h1>Notes</h1>
+      {
+        loading 
+         ? "Cargando ..." : ""
+      }
       <ol>
       {notes
         .map((note) => (
