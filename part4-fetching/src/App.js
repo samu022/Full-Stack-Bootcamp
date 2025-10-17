@@ -1,21 +1,22 @@
 import { useEffect, useState } from "react";
 import {Note} from "./Note.js";
-import axios from 'axios';
+//import axios from 'axios';
+import { getAllNotes } from "./services/notes/getAllNotes.js";
+import { createNote } from "./services/notes/createNote.js";
 
 export default function App() {
   const [notes, setNotes] = useState([]);
   const [newNote, setNewNote] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   //fetch recupera datos de una api
   useEffect(() =>{
     setLoading(true); 
-      axios
-      .get('https://jsonplaceholder.typicode.com/posts')
-      .then(response => {
-        const {data} = response;
-        setNotes(data);
-        setLoading(false); 
-      });
+     getAllNotes()
+     .then(notes => {
+      setNotes(notes);
+      setLoading(false);
+     });
   }, []);
   const handleChange = (event) => {
     setNewNote(event.target.value);
@@ -29,11 +30,20 @@ export default function App() {
       body: newNote,
       userId: 1
     };
-    axios.post("https://jsonplaceholder.typicode.com/posts", noteToAddToState)
+    setError("");
+    createNote(noteToAddToState)
+    .then(newNote => {
+      setNotes((prevNotes) => prevNotes.concat(newNote));
+    })
+    .catch((e) => {
+      console.error(e);
+      setError('La API ha fallado');
+    });
+    /*axios.post("https://jsonplaceholder.typicode.com/posts", noteToAddToState)
     .then(response => {
       const {data} = response;
       setNotes(prevNotes => prevNotes.concat(data));
-    })
+    });*/
 
     //setNotes((prevNotes) => prevNotes.concat(noteToAddToState));
     setNewNote("");
@@ -47,6 +57,7 @@ export default function App() {
         loading 
          ? "Cargando ..." : ""
       }
+      
       <ol>
       {notes
         .map((note) => (
@@ -58,6 +69,7 @@ export default function App() {
         <input type="text" onChange={handleChange} value={newNote}></input>
         <button>Crear nota</button>
       </form>
+      {error ? error : ""}
     </div>
   );
 }
